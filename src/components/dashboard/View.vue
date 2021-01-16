@@ -49,7 +49,7 @@
               v-if="item"
               class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"
             >
-              {{ item.email }}
+              {{ item.addresses }}
             </dd>
           </div>
           <div
@@ -177,6 +177,7 @@ export default {
         if (this.loading === false) {
           clearInterval(this.interval);
           this.alert = true;
+          // go to dashboard
           this.gotodashboard();
         }
       }, 500);

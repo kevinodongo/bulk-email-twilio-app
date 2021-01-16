@@ -1,11 +1,18 @@
 // BULK VUEX STORE
+
+import {
+  sendbulkemail,
+  sendbulkRawemail,
+  sendbulksms
+} from "../components/script";
+
 //=================================
 const state = {
   all: [], // stores user content
   selected: {
     title: "",
     subject: "",
-    email: "",
+    addresses: "",
     content: "",
     status: "",
     attachment: "",
@@ -21,10 +28,32 @@ const actions = {
     commit("updateall", value);
   },
   // send or edit content
-  saveandeditbulk({ commit }, value) {
+  async saveandeditbulk({ commit }, value) {
     let data = state.all; //  get all user content
+    // retirved saved checks
+    const email_check = localStorage.getItem("@bulkemail");
+    const phone_check = localStorage.getItem("@bulkphone");
+    const attachment_check = localStorage.getItem("@attachment");
+    if (
+      JSON.parse(email_check) === true &&
+      JSON.parse(attachment_check) === true
+    ) {
+      // send raw bulk email
+      await sendbulkRawemail(value);
+    } else if (
+      JSON.parse(email_check) === true &&
+      JSON.parse(attachment_check) !== true
+    ) {
+      // send bulk email
+      await sendbulkemail(value);
+    } else if (JSON.parse(phone_check) === true) {
+      // send bulk phone number
+      await sendbulksms(value);
+    }
+
+    // Once processed
     if (state.editedIndex === -1) {
-      //save
+      //save in your database
       data.push(value);
     } else {
       // edit
@@ -38,6 +67,10 @@ const actions = {
     setTimeout(() => {
       // close loader
       commit("updateloading", false);
+      // clear the local storage once done
+      localStorage.removeItem("@bulkemail");
+      localStorage.removeItem("@bulkphone");
+      localStorage.removeItem("@attachment");
     }, 1000);
   },
   // save selected
@@ -59,7 +92,7 @@ const actions = {
     let item = {
       title: "",
       subject: "",
-      email: "",
+      addresses: "",
       content: "",
       status: "",
       attachment: "",

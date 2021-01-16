@@ -1,5 +1,6 @@
 <template>
   <div class="main-dashboard">
+    <Modal v-if="showmodal" @closemodal="closemodal" />
     <!-- This example requires Tailwind CSS v2.0+ -->
     <div>
       <nav class="bg-gray-800">
@@ -21,7 +22,7 @@
                   >
 
                   <a
-                    @click="createcontent"
+                    @click="showmodal = true"
                     class="create-button text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                     >Create Content</a
                   >
@@ -56,7 +57,7 @@
                 <div class="ml-3 relative">
                   <div>
                     <button
-                      @click="show = !show"
+                      @click="showmenu = !showmenu"
                       class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                       id="user-menu"
                       aria-haspopup="true"
@@ -80,7 +81,7 @@
                   To: "transform opacity-0 scale-95"
               -->
                   <div
-                    v-if="show"
+                    v-if="showmenu"
                     class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5"
                     role="menu"
                     aria-orientation="vertical"
@@ -282,10 +283,14 @@
 </template>
 
 <script>
+import Modal from "../components/dashboard/Modal";
 export default {
+  name: "Dashboard",
+  components: { Modal },
   data() {
     return {
-      show: false,
+      showmenu: false,
+      showmodal: false
     };
   },
   methods: {
@@ -298,8 +303,8 @@ export default {
       this.$router.push("/dashboard/main");
     },
     // create content
-    createcontent() {
-      this.$router.push("/dashboard/create-bulk-content");
+    closemodal() {
+      this.showmodal = false;
     },
     // go to calendar
     gotocalendar() {
